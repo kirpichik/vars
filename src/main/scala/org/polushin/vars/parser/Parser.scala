@@ -4,6 +4,9 @@ import scala.util.Try
 
 trait Parser extends AutoCloseable {
 
-  def nextUnit(): Try[ParseUnit]
+  def nextStatement(): Try[Option[Statement]]
 
 }
+
+class ParseException(reason: String, filename: String, line: Int)
+  extends RuntimeException(s"Parse error at $filename:$line because of $reason")
