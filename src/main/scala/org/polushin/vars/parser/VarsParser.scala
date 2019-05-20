@@ -15,7 +15,7 @@ class VarsParser(lexer: Lexer, filename: String) extends Parser {
         lexer.nextLexeme() match {
           case NewLine => currentLine += 1; statement
           case EOF => statement
-          case _ => throw new ParseException("Expected new line at the end of the statement", filename, currentLine)
+          case _ => throw new ParseException("Expected new line or EOF at the end of the statement", filename, currentLine)
         }
       case None => None
     }
@@ -26,6 +26,7 @@ class VarsParser(lexer: Lexer, filename: String) extends Parser {
     case Identifier(varName) => Some(parseAssignStatement(varName))
     case NewLine => currentLine += 1; parseStatement()
     case EOF => None
+    case lexeme => throw new ParseException(s"Unexpected lexeme: ${lexeme.getClass.getSimpleName}", filename, currentLine)
   }
 
   private def parseImportStatement(): Statement = lexer.nextLexeme() match {
