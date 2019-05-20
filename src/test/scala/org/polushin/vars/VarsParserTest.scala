@@ -78,26 +78,26 @@ class VarsParserTest extends FunSuite {
     assertStatementError(Seq(Identifier("f"), Equal, Import, EOF))
   }
 
-}
+  private class TestParser extends Parser {
+    override def nextStatement(): Try[Option[Statement]] = Try {
+      None
+    }
 
-private class TestParser extends Parser {
-  override def nextStatement(): Try[Option[Statement]] = Try {
-    None
+    override def close(): Unit = {}
   }
 
-  override def close(): Unit = {}
-}
-
-private class TestParserFactory extends ParserFactory {
-  override def parseFile(filename: String): Try[Parser] = Try {
-    new TestParser()
+  private class TestParserFactory extends ParserFactory {
+    override def parseFile(filename: String): Try[Parser] = Try {
+      new TestParser()
+    }
   }
-}
 
-private class TestLexer(lexemes: Seq[Lexeme]) extends Lexer {
-  private val queue = mutable.Queue(lexemes: _*)
+  private class TestLexer(lexemes: Seq[Lexeme]) extends Lexer {
+    private val queue = mutable.Queue(lexemes: _*)
 
-  override def nextLexeme(): Lexeme = queue.dequeue
+    override def nextLexeme(): Lexeme = queue.dequeue
 
-  override def close(): Unit = {}
+    override def close(): Unit = {}
+  }
+
 }
