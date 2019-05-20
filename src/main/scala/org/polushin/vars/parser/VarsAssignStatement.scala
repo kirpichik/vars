@@ -6,7 +6,7 @@ import scala.util.{Failure, Success, Try}
 
 class VarsAssignStatement(define: DefineInfo, value: String, isIdentifier: Boolean) extends Statement {
 
-  override def applyScope(scope: Scope): Try[Scope] = {
+  override def applyScope(scope: Scope, depth: List[String]): Try[Scope] = {
     scope.define(define) match {
       case None => if (isIdentifier && !scope.isDefined(value)) {
         Failure(new UnknownIdentifierException(value, define.filename, define.line))

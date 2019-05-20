@@ -4,6 +4,9 @@ import scala.util.control.NonFatal
 
 package object parser {
 
+  class ParseException(reason: String, filename: String, line: Int)
+    extends RuntimeException(s"Parse error at $filename:$line because of $reason")
+
   def withResources[T <: AutoCloseable, V](r: => T)(f: T => V): V = {
     val resource: T = r
     require(resource != null, "resource is null")

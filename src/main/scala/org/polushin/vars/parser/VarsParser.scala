@@ -31,7 +31,7 @@ class VarsParser(factory: ParserFactory, lexer: Lexer, filename: String) extends
   }
 
   private def parseImportStatement(): Statement = lexer.nextLexeme() match {
-    case Identifier(id) => new VarsImportStatement(factory, id)
+    case Identifier(id) => new VarsImportStatement(factory, id, filename, currentLine)
     case _ => throw new ParseException("Expected filename after import keyword", filename, currentLine)
   }
 

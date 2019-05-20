@@ -8,15 +8,10 @@ trait Scope {
 
   def define(defineInfo: DefineInfo): Option[ConflictingDefinition]
 
+  def getDefinitions: Iterable[String]
+
 }
 
 object Scope {
   type ConflictingDefinition = (DefineInfo, DefineInfo)
 }
-
-class UnknownIdentifierException(name: String, filename: String, line: Int)
-  extends RuntimeException(s"Unknown identifier $name at $filename:$line")
-
-class ConflictingIdentifiersException(conflict: ConflictingDefinition)
-  extends RuntimeException(s"Conflicting definition ${conflict._1.name} " +
-    s"at ${conflict._1.filename}:${conflict._1.line} and ${conflict._2.filename}:${conflict._2.line}")
