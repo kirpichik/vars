@@ -6,13 +6,13 @@ import scala.util.{Failure, Success, Try}
 
 class VarsAssignStatement(define: DefineInfo, value: String, isIdentifier: Boolean) extends Statement {
 
-  override def applyScope(scope: Scope, depth: List[String]): Try[Scope] = {
+  override def applyScope(scope: Scope, depth: List[(String, Int)]): Try[Scope] = {
     scope.define(define) match {
       case None => if (isIdentifier && !scope.isDefined(value)) {
-        Failure(new UnknownIdentifierException(value, define.filename, define.line))
+        Failure(new UnknownIdentifierException(value, depth, define.filename, define.line))
       } else
         Success(scope)
-      case Some(conflict) => Failure(new ConflictingIdentifiersException(conflict))
+      case Some(conflict) => Failure(new ConflictingIdentifiersException(conflict, depth))
     }
   }
 

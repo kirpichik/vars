@@ -6,6 +6,6 @@ import scala.util.Try
 
 trait Statement {
 
-  def applyScope(scope: Scope, depth: List[String]): Try[Scope]
+  def applyScope(scope: Scope, depth: List[(String, Int)]): Try[Scope]
 
 }
