@@ -2,18 +2,19 @@ package org.polushin.vars
 
 import org.junit.runner.RunWith
 import org.polushin.vars.lexer._
-import org.polushin.vars.parser.{Statement, VarsAssignStatement, VarsImportStatement, VarsParser}
+import org.polushin.vars.parser._
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 
 import scala.collection.mutable
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Success, Try}
 
 @RunWith(classOf[JUnitRunner])
 class VarsParserTest extends FunSuite {
 
   def assertStatementTypes(lexemes: Seq[Lexeme], types: Seq[Class[_ <: Statement]]): Unit = {
-    val parser = new VarsParser(new TestLexer(lexemes), "tests")
+    val factory = new TestParserFactory()
+    val parser = new VarsParser(factory, new TestLexer(lexemes), "tests")
     types.foreach(tp => parser.nextStatement() match {
       case Success(value) => value match {
         case Some(statement) => assert(tp == statement.getClass)
@@ -24,7 +25,8 @@ class VarsParserTest extends FunSuite {
   }
 
   def assertStatementError(lexemes: Seq[Lexeme]): Unit = {
-    val parser = new VarsParser(new TestLexer(lexemes), "tests")
+    val factory = new TestParserFactory()
+    val parser = new VarsParser(factory, new TestLexer(lexemes), "tests")
     parser.nextStatement() match {
       case Success(_) => fail("Parser did not throw exception")
       case _ =>
@@ -76,6 +78,20 @@ class VarsParserTest extends FunSuite {
     assertStatementError(Seq(Identifier("f"), Equal, Import, EOF))
   }
 
+}
+
+private class TestParser extends Parser {
+  override def nextStatement(): Try[Option[Statement]] = Try {
+    None
+  }
+
+  override def close(): Unit = {}
+}
+
+private class TestParserFactory extends ParserFactory {
+  override def parseFile(filename: String): Try[Parser] = Try {
+    new TestParser()
+  }
 }
 
 private class TestLexer(lexemes: Seq[Lexeme]) extends Lexer {
