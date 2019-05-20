@@ -1,16 +1,24 @@
 package org.polushin.vars.lexer
 
-object LexemeType extends Enumeration {
+abstract class Lexeme
 
-  type LexemeType = Value
+// End of file
+case object EOF extends Lexeme
 
-  val
-  Invalid, // Invalid lexeme
-  EOF, // End of file
-  Import, // "import" keyword
-  Identifier, // file name or var name
-  Equal, // "=" sign
-  Number // some number
-  = Value
+// New line
+case object NewLine extends Lexeme
 
-}
+// Import keyword
+case object Import extends Lexeme
+
+// Filename or variable name
+case class Identifier(word: String) extends Lexeme
+
+// Equal sign
+case object Equal extends Lexeme
+
+// Number value
+case class Number(word: String) extends Lexeme
+
+// Single character (special type for unknown symbols)
+private case class Character(c: Char) extends Lexeme
