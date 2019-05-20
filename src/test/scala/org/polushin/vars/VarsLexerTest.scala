@@ -47,4 +47,13 @@ class VarsLexerTest extends FunSuite {
       NewLine, Identifier("var"), Equal, Identifier("value"), EOF))
   }
 
+  test("Invalid lexemes") {
+    assertLexemes("#$%", Seq(Character('#'), Character('$'), Character('%'), EOF))
+
+    // This is an invalid lexeme from the point of view of a lexical analyzer,
+    // but since its processing would complicate the return values of the lexer,
+    // this error will be caught at the parsing stage.
+    assertLexemes("123foo", Seq(Number("123"), Identifier("foo"), EOF))
+  }
+
 }

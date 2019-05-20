@@ -21,4 +21,4 @@ case object Equal extends Lexeme
 case class Number(word: String) extends Lexeme
 
 // Single character (special type for unknown symbols)
-private case class Character(c: Char) extends Lexeme
+case class Character(c: Char) extends Lexeme
