@@ -29,7 +29,8 @@ class VarsParserTest extends FunSuite {
     val parser = new VarsParser(factory, new TestLexer(lexemes), "tests")
     parser.nextStatement() match {
       case Success(_) => fail("Parser did not throw exception")
-      case _ =>
+      case Failure(_: ParseException) =>
+      case Failure(e) => fail("Parser throws unknown exception", e)
     }
   }
 
