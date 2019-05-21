@@ -31,12 +31,12 @@ package object vars {
     }
   }
 
-  class RecursiveImportException(importName: String, filename: String, line: Int, depth: List[(String, Int)])
-    extends RuntimeException(RecursiveImportException.message(importName, filename, line, depth))
+  class CyclicImportException(importName: String, filename: String, line: Int, depth: List[(String, Int)])
+    extends RuntimeException(CyclicImportException.message(importName, filename, line, depth))
 
-  object RecursiveImportException {
+  object CyclicImportException {
     private def message(importName: String, filename: String, line: Int, depth: List[(String, Int)]): String = {
-      buildDepthStack(depth) + s"Recursive import '$importName' in '$filename' at line $line"
+      buildDepthStack(depth) + s"Cyclic import '$importName' in '$filename' at line $line"
     }
   }
 }

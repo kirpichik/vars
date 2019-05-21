@@ -1,6 +1,6 @@
 package org.polushin.vars.parser
 
-import org.polushin.vars.{RecursiveImportException, Scope}
+import org.polushin.vars.{CyclicImportException, Scope}
 
 import scala.util.{Failure, Success, Try}
 
@@ -8,7 +8,7 @@ class VarsImportStatement(factory: ParserFactory, importName: String, filename: 
 
   override def applyScope(scope: Scope, depth: List[(String, Int)]): Try[Scope] = {
     if (isRecursiveImport(depth))
-      Failure(new RecursiveImportException(importName, filename, line, depth))
+      Failure(new CyclicImportException(importName, filename, line, depth))
     else factory.parseFile(importName) match {
       case Failure(exception) => Failure(exception)
       case Success(parser) => withResources(parser)(parser => applyParserScope(parser, scope, (importName, line) :: depth))

@@ -97,7 +97,8 @@ class VarsScopeTest extends FunSuite {
     val scope = new VarsScope
     assignIdentStmt("a", "b").applyScope(scope, List.empty) match {
       case Success(_) => fail("Assignment 'a = b' with empty scope")
-      case Failure(_) =>
+      case Failure(_: UnknownIdentifierException) =>
+      case Failure(e) => fail("Unknown definitions unknown exception", e)
     }
   }
 
@@ -106,7 +107,8 @@ class VarsScopeTest extends FunSuite {
     assignNumberStmt("a", "1").applyScope(scope, List.empty)
     assignNumberStmt("a", "123").applyScope(scope, List.empty) match {
       case Success(_) => fail("Conflict assignments success 'a = 1' and 'a = 123'")
-      case Failure(_) =>
+      case Failure(_: ConflictingIdentifiersException) =>
+      case Failure(e) => fail("Conflict assignments unknown exception", e)
     }
   }
 
@@ -129,11 +131,12 @@ class VarsScopeTest extends FunSuite {
     val scope = new VarsScope
     importStmt(factory, "file3", "").applyScope(scope, List.empty) match {
       case Success(_) => fail("Definitions conflict in different imports success")
-      case Failure(_) =>
+      case Failure(_: ConflictingIdentifiersException) =>
+      case Failure(e) => fail("Definitions conflict unknown exception", e)
     }
   }
 
-  test("Recursive imports") {
+  test("Cyclic imports") {
     val factory = new TestParserFactory()
     factory.files =
       Map(
@@ -150,8 +153,9 @@ class VarsScopeTest extends FunSuite {
 
     val scope = new VarsScope
     importStmt(factory, "file1", "").applyScope(scope, List.empty) match {
-      case Success(_) => fail("Recursive import file1 -> file2 -> file3 -> file1 success")
-      case Failure(_) =>
+      case Success(_) => fail("Cyclic import success")
+      case Failure(_: CyclicImportException) =>
+      case Failure(e) => fail("Cyclic import unknown exception", e)
     }
   }
 
